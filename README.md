@@ -24,6 +24,7 @@ pip install -r requirements.txt
 - Correr los tests con nosetests
 ```
 nosetests [<package_name>]
+nosetests model
 ```
 
 - Si no tienen python3.5 y no lo quieren instalar, pueden probar instanciando un container con python 3.5 montando un volumen para ver los cambios dinamicamente

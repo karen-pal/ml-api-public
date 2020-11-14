@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-
+import redis
+import json
+import time
+from classifier import SentimentClassifier
 ########################################################################
 # COMPLETAR AQUI: Crear conexion a redis y asignarla a la variable "db".
 ########################################################################
-db = None
+db = redis.Redis(host='redis', port=6379, db=0)
 ########################################################################
 
 ########################################################################
@@ -11,7 +14,7 @@ db = None
 # Use classifier.SentimentClassifier de la libreria
 # spanish_sentiment_analysis ya instalada
 ########################################################################
-model = None
+model = SentimentClassifier()
 ########################################################################
 
 
@@ -37,10 +40,12 @@ def sentiment_from_score(score):
     ####################################################################
     # COMPLETAR AQUI
     ####################################################################
-    sentiment = None
-    raise NotImplementedError
-    ####################################################################
-
+    sentiment = 'Neutral'
+    if score < .45:
+        sentiment = 'Negativo'
+    #etc
+    elif score > .55:
+        sentiment = 'Positivo'
     return sentiment
 
 
@@ -61,8 +66,8 @@ def predict(text):
     score : float
         Porcentaje de positividad.
     """
-    sentiment = None
-    score = None
+    score = model.predict(text)
+    sentiment = sentiment_from_score(score)
 
     ####################################################################
     # COMPLETAR AQUI: Utilice el clasificador instanciado previamente
@@ -70,7 +75,6 @@ def predict(text):
     # Luego utilice la función "sentiment_from_score" de este módulo
     # para obtener el sentimiento ("sentiment") a partir del score.
     ####################################################################
-    raise NotImplementedError
     ####################################################################
 
     return sentiment, score
@@ -89,7 +93,7 @@ def classify_process():
         # COMPLETAR AQUI: Obtenga un batch de trabajos encolados, use
         # lrange de Redis. Almacene los trabajos en la variable "queue".
         ##################################################################
-        queue = None
+        queue = db.lrange('service_queue',0,9)
         ##################################################################
 
         # Iteramos por cada trabajo obtenido
@@ -104,7 +108,15 @@ def classify_process():
             #       respuesta. Recuerde usar como "key" el "job_id".
             #
             ##############################################################
-            raise NotImplementedError
+            # q = {"text": "texto_ejemplo", "id": 2}
+            # processing
+            q = json.loads(q.decode('utf-8'))
+            job_id = q["id"]
+            sentiment,score = predict(q["text"])
+
+            # output creation
+            response = {"prediction":sentiment, "score":score}
+            db.set(job_id, json.dumps(response))
             ##############################################################
 
         ##################################################################
@@ -112,7 +124,8 @@ def classify_process():
         # procesados. Luego duerma durante unos milisengundos antes de
         # pedir por mas trabajos.
         ##################################################################
-        raise NotImplementedError
+        db.ltrim('service_queue', len(queue),-1)
+        time.sleep(2)
         ##################################################################
 
 
