@@ -71,5 +71,5 @@ def model_predict(text_data):
 
         time.sleep(2)
         #################################################################
-    print(json.dumps({"prediction":prediction}))
+    print(json.dumps({"text":text_data,"prediction":prediction,"score":score}))
     return prediction, score
