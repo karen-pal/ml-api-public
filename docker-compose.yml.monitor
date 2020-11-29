@@ -51,3 +51,7 @@ services:
       - GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource
     volumes:
       - grafana_data:/var/lib/grafana
+
+volumes:
+  grafana_data:
+    driver: local

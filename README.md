@@ -49,7 +49,7 @@ pip install locust
 ```
 correr locust en nuestra app
 ```
-locust -f ./stress_tests/locustfile.py
+locust -f ./stress_test/locustfile.py
 ```
 
 entrar a http://localhost:8089/
@@ -75,6 +75,7 @@ titulo udp gelf
 start input
 
 # grafana
+http://localhost:3000/
 grafana
 
 admin,admin
