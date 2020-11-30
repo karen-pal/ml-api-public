@@ -13,6 +13,12 @@ Para detener los servicios:
 $ docker-compose down
 ```
 
+Si te quedan servicios cuando hacés docker ps, no los necesitás y se hacen dificil de bajar:
+
+```
+docker rm -f $(docker ps -q)
+```
+
 ## Tests
 
 - Instalar un virtualenv con los requirements.txt del origen
